@@ -1,0 +1,2 @@
+# nixhyprconf
+My configuration files
