@@ -84,6 +84,7 @@
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       firefox
+      brave
       kate
       bitwarden
       thunderbird
@@ -96,7 +97,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   wget
   curlWithGnuTls
   ripgrep
@@ -104,6 +104,7 @@
   neovim
   nvimpager
   zellij
+  alacritty
   kitty
   fzf
 
@@ -131,6 +132,9 @@
   zls
 
   go
+  (python3.withPackages (subpkgs: with subpkgs; [
+      pip transmissionrpc
+  ]))
 
   lua
   luajit
@@ -143,8 +147,16 @@
   cpio
   cmake
   meson
-  emacs28
   wofi
+
+  stow
+  ollama
+  ];
+
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    # Add any missing dynamic libraries for unpackaged programs here,
+    # Not in environment.systemPackages
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -160,9 +172,24 @@
   # Hyprland
   programs.hyprland.enable = true;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  xdg.portal.wlr.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  # Enable autoupdate
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.allowReboot = true;
+
+  # Emacs
+  services.emacs = {
+    enable = true;
+    package = pkgs.emacs29-gtk3;
+  };
+
+  # Ollama
+  services.ollama.enable = true;
+
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
