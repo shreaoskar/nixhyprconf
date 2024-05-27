@@ -46,10 +46,25 @@
   services.xserver.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
-  services.xserver.displayManager.sddm.enable = true;
-  #  services.xserver.displayManager.gdm.enable = true;
-  #  services.xserver.displayManager.gdm.wayland = false;
-  services.xserver.desktopManager.plasma5.enable = true;
+  # services.xserver.displayManager.sddm.enable = true;
+  #  services.xserver.displayManager.gdm.enable = true; 
+  # services.xserver.desktopManager.plasma5.enable = true;
+
+  services.xserver = {
+    displayManager = {
+      defaultSession = "hyprland";
+      sddm = {
+        enable = true;
+      };
+    };
+
+    desktopManager = {
+      plasma5 = {
+        enable = true;
+        useQtScaling = true;
+      };
+    };
+  };
 
   # Configure keymap in X11
   services.xserver.layout = "us";
@@ -59,6 +74,8 @@
 
   # Enable sound with pipewire.
   sound.enable = true;
+  sound.mediaKeys.enable = true;
+
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -81,7 +98,7 @@
   users.users.roy = {
     isNormalUser = true;
     description = "roy";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "vboxusers"];
     packages = with pkgs; [
       firefox
       brave
@@ -104,9 +121,16 @@
   neovim
   nvimpager
   zellij
+  tmux
   alacritty
   kitty
   fzf
+
+  # Utils
+  xdg-utils
+  wayland-utils
+  coreutils-full
+  binutils
 
   # wayland stuff
   hyprpaper
@@ -133,25 +157,36 @@
 
   go
   (python3.withPackages (subpkgs: with subpkgs; [
-      pip transmissionrpc
+      pip
   ]))
 
-  lua
   luajit
 
+  docker
+  docker-client
+
   # git
-  gitSVN
-  git-doc
+  # git-doc
   gh
 
   cpio
   cmake
   meson
   wofi
+  rofi
 
   stow
   ollama
+  transmission-qt
+  isoimagewriter
   ];
+
+  programs.git = {
+    enable = true;
+    package = pkgs.gitFull;
+  };
+
+  programs.fzf.keybindings = true;
 
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
@@ -191,6 +226,8 @@
   services.ollama.enable = true;
 
 
+  
+  
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
